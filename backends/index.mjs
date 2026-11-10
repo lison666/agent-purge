@@ -9,6 +9,7 @@ import { dataHome } from "../lib/home.mjs";
 import { swapFile } from "../lib/restore.mjs";
 import { installKilocode, uninstallKilocode } from "../lib/kilocode.mjs";
 import { antigravityBin, temporaryAntigravity } from "../lib/antigravity.mjs";
+import { devinBin, temporaryDevin } from "../lib/devin.mjs";
 
 function temporaryPlugin(harness, file, root, args) {
  let undo = null;
@@ -154,6 +155,21 @@ export const backends = {
 			cleanup: () => { if (undo) { undo(); undo = null; } },
 		};
 	},
+
+	// Devin CLI：没有 --system-prompt 类参数。人设落 %APPDATA%\devin\AGENTS.md 托管块
+	// （进 <rules type="always-on"> 段）；按「装着跑」处理：启动前写入、退出按原字节还原。
+	// 常驻 install 另有 config.json 钩子每轮注入——临时启用只写规则块，不动用户钩子配置。
+	devin: ({ personaText, mode, args = [] }) => {
+		if (mode === "off") return { cmd: devinBin(), args };
+		let undo = null;
+		return {
+			cmd: devinBin(),
+			args,
+			note: "人设写进 %APPDATA%/devin/AGENTS.md（<rules> 段）；退出按原字节还原（已常驻的块不会被动）",
+			setup: () => { if (!undo) undo = temporaryDevin({ personaText, mode }); },
+			cleanup: () => { if (undo) { undo(); undo = null; } },
+		};
+	},
 };
 
 
@@ -228,6 +244,19 @@ export const oneshots = {
 			args: ["-p", prompt],
 			note: "人设写进 ~/.gemini/config/AGENTS.md；退出按原字节还原",
 			setup: () => { if (!undo) undo = temporaryAntigravity({ personaText, mode }); },
+			cleanup: () => { if (undo) { undo(); undo = null; } },
+		};
+	},
+
+	devin: ({ prompt, personaText, mode }) => {
+		// devin -p 一次性问答：同样只能靠 AGENTS.md 落点，跑完按原字节还原
+		if (mode === "off") return { cmd: devinBin(), args: ["-p", prompt] };
+		let undo = null;
+		return {
+			cmd: devinBin(),
+			args: ["-p", prompt],
+			note: "人设写进 %APPDATA%/devin/AGENTS.md；退出按原字节还原",
+			setup: () => { if (!undo) undo = temporaryDevin({ personaText, mode }); },
 			cleanup: () => { if (undo) { undo(); undo = null; } },
 		};
 	},

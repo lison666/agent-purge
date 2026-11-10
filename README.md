@@ -159,6 +159,7 @@ agent-purge status
 | Antigravity（App + CLI `agy`） | CLI 1.5.3 / 语言服务 1.23.x | off/strict/replace/append 四模式真实抓包；写 `~/.gemini/config/AGENTS.md`，落 system 层 `<user_rules>`；`<identity>` 段仍在，靠规则段优先级压住 |
 | WorkBuddy / WorkBuddy AI | 5.9.3 / 5.9.4 | 身份上下文已验证（国际版写 `app/app-config.json`）；热切未验证 |
 | PI-Desktop | 0.21.0（便携版） | 已实测：常驻写 `~/.pi/agent/SYSTEM.md`；热切装在 `plugins/imported` 的 imported 插件里，同一会话换人设/`/purge off` 下一轮生效 |
+| Devin（CLI + Desktop 的 acp 后端） | — | 规则注入已实测：全局 `AGENTS.md` 托管块进 `<rules type="always-on">` 段；`config.json` 的 SessionStart/UserPromptSubmit 钩子每轮回读 `state.json`，同一会话换人设下一轮生效（注 `additionalContext`，非 system 数组）；落点为官方文档格式，请求级抓包未验 |
 
 首次安装或更新插件代码后，仍需重新加载宿主。**配置写入、历史测试通过、当前会话实际生效，是不同状态。**
 

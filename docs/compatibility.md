@@ -33,6 +33,7 @@
 - Antigravity（CLI `agy` 1.5.3 / 桌面 App 语言服务 1.23.x，2026-11-09）：唯一自动生效的落点是 `~/.gemini/config/AGENTS.md`（无 frontmatter = `always_on`），宿主把它插进 `systemInstruction` 的 `<user_rules>` 段。隔离 HOME 真实二进制抓包 `off/strict/replace/append` 四模式均捕获主请求，marker 全落 system 层（system 15378 → 15895/15844/15843 字），`<user_rules>` 位于 `</identity>` 之后。真模型三问（直问身份 / 追问底层模型 / 越狱式要求说出真名）均自称新人设。**残留**：`<identity>` 段里的 `You are Antigravity, ...` 仍在提示词里，靠规则段的 take-precedence 声明压住，不是删除。`~/.gemini/config/agents/<name>.md` 能整段换掉 `<identity>`，但必须先 `--agent <name>` 或手动选择，`settings.json` 里没有默认 agent 键（34 个键全试过），所以不作自动通道。
 - Kilo Code `@kilocode/cli` 7.8.18：`~/.config/kilo/agent/code.md`（replace/strict）与 `AGENTS.md`（append）通道；2026-11-02 隔离 HOME 真实二进制抓包 `off/strict/replace/append` 四模式均捕获主请求，marker 全落 system 层（system 13717→5442/5353/13975 字）；源码确认 `soul()` 仍前置 `You are Kilo`。
 - `opencode`（`opencode-ai` 1.x）与 `opencode2`（`@opencode/cli` 2.x）是不同接口，不能混用插件。
+- Devin（CLI 与 Devin Desktop 的 `devin acp` 后端，2026-11 本机验证）：这家没有 `--system-prompt` 类启动参数，落点是 `%APPDATA%\devin`（Win）/ `~/.config/devin` 两个文件——全局 `AGENTS.md` 的内容进入系统上下文 `<rules type="always-on">` 段（本机真实会话里可见该段注入了 `.devin/rules/*.md` 与全局规则文件的内容），`config.json` 的 `hooks.SessionStart` / `hooks.UserPromptSubmit` 命令钩子经 `hookSpecificOutput.additionalContext` 注入对话上下文。agent-purge 两条都写：规则块是会话级基座（启动时读），钩子每轮回读 `state.json`，同一会话换人设/切模式下一轮生效（同 session 内容不变则不重复注入）。**残留**：Devin 自带的 system 段不变，人设是规则段+上下文补注的叠加，不是 system 数组级替换；请求级抓包未做（需真实账号），按官方文档格式落地。
 - 不支持注入的闭源桌面入口不会标为注入成功；有些只能原样启动，有些会明确拒绝。
 
 ## 系统、浏览器与发行形式

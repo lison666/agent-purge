@@ -990,12 +990,14 @@ function help() {
    slash    pi / omp / dsh 通过扩展提供 /purge，会话下一轮读取
    project  写当前项目根的 AGENTS.md / CLAUDE.md（和全局块同时开会两份都进）
    热切     pi / omp / dsh / opencode / opencode2 已验证同会话 A→B→strict→off
+            devin 的 UserPromptSubmit 钩子每轮回读 state.json（注 additionalContext）
             首次安装或更新插件代码需重新加载；其他启动参数入口需新会话
    证据     npm run test:harness；Web「验证与诊断」展示请求角色与宿主残留
             配置写入不代表当前会话已读取；Codex 实际请求角色为 developer。
 
-harness: pi, opencode, opencode2, dsh, codex, claude, grok, omp, hermes, zcode, antigravity, codebuddy
-          opencode2 = @opencode/cli 2.x（v2 插件 API），dsh = DeepSeek Harness（cordis 插件，desktop/web/headless 三形态）。
+harness: pi, opencode, opencode2, dsh, codex, claude, grok, omp, hermes, zcode, antigravity, codebuddy, devin
+          opencode2 = @opencode/cli 2.x（v2 插件 API），dsh = DeepSeek Harness（cordis 插件，desktop/web/headless 三形态），
+          devin = Devin CLI/Devin Desktop 的 acp 后端（AGENTS.md 规则块 + config.json 钩子）。
 `);
 }
 

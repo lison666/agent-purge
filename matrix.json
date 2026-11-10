@@ -376,6 +376,21 @@
       "residue": "宿主 soul() 仍会前置 “You are Kilo” 身份",
       "note": "Kilo Code CLI/VS Code；原生 agent Markdown 配置，无需改二进制",
       "preferredMode": "replace"
+    },
+    "devin": {
+      "class": "config-or-hook",
+      "override": true,
+      "inject": true,
+      "hotSwitch": true,
+      "patch": false,
+      "launcher": "devin（%APPDATA%/devin/AGENTS.md 托管块 → 系统上下文 <rules type=\"always-on\"> 段；config.json SessionStart/UserPromptSubmit 命令钩子每轮回读 state.json）",
+      "defaultSystemChars": null,
+      "purgedSystemChars": null,
+      "measuredVersion": "CLI（devin / devin acp 后端）",
+      "verify": "官方文档核对 hooks/rules 格式；本机真实会话实测：写入 .devin/rules 与全局 AGENTS.md 的内容出现在系统上下文 <rules type=\"always-on\"> 段（rules injection 可见）；钩子走 hookSpecificOutput.additionalContext",
+      "residue": "Devin 自带 system 段不变；人设以 <rules> 规则块 + 钩子 additionalContext 叠加，strict 模式前置「取代上方身份」声明",
+      "note": "没有 system 数组级落点与 --system-prompt 参数；规则块（启动快照）+ 钩子（每轮热切）是这家最强组合。UserPromptSubmit 钩子只在人设/模式哈希变化时重复注入，不逐轮堆上下文",
+      "preferredMode": "strict"
     }
   },
   "armorTarget": "https://api.deepseek.com/v1 · deepseek-flash",

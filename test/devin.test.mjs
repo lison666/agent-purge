@@ -193,7 +193,8 @@ test("devin: temporary install restores bytes and keeps resident block intact", 
 // ── 钩子脚本端到端：真跑生成的 purge-hook.mjs ──────────────────────────────────
 function seedState(data, { persona = "devin-persona", armed = ["install"], defaultMode = "replace" } = {}) {
 	mkdirSync(join(data, "personas"), { recursive: true });
-	writeFileSync(join(data, "personas", persona + ".md"), `你是 ${persona}\n第二行正文`);
+	// 真实 persona 文件带 frontmatter；进上下文的只能是正文
+	writeFileSync(join(data, "personas", persona + ".md"), `---\nid: ${persona}\nname: 测试人设\n---\n\n你是 ${persona}\n第二行正文`);
 	writeFileSync(
 		join(data, "state.json"),
 		JSON.stringify({ persona, default: { mode: defaultMode }, armed: { devin: armed }, overrides: {} }),
@@ -220,6 +221,9 @@ test("devin hook: SessionStart injects persona via additionalContext", () => {
 		assert.equal(parsed.hookSpecificOutput.hookEventName, "SessionStart");
 		assert.match(parsed.hookSpecificOutput.additionalContext, new RegExp(persona));
 		assert.match(parsed.hookSpecificOutput.additionalContext, /以本段为准/);
+		// frontmatter 元数据不能漏进上下文
+		assert.doesNotMatch(parsed.hookSpecificOutput.additionalContext, /name: 测试人设/);
+		assert.match(parsed.hookSpecificOutput.additionalContext, /第二行正文/);
 	});
 });
 
